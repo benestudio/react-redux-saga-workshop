@@ -5,9 +5,16 @@ import PostList from './components/PostList';
 import styles from './styles/Post.css';
 import SpinnerStyle from './styles/Spinner.css';
 import { FETCH_POSTS } from './actions/types';
+import RefreshButton from './components/RefreshButton';
 
 class App extends Component {
   componentDidMount() {
+    this.refreshPosts();
+  }
+
+  onClick = () => this.refreshPosts();
+
+  refreshPosts() {
     const { getPosts } = this.props;
     getPosts();
   }
@@ -17,6 +24,7 @@ class App extends Component {
     return (
       <div>
         <h1 className={styles.title}>Posts</h1>
+        <RefreshButton onClick={this.onClick}>Refresh</RefreshButton>
         {isLoading ? <div className={SpinnerStyle.loader} /> : <PostList posts={posts} />}
       </div>
     );
