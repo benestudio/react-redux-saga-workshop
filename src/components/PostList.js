@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Post from './Post';
-import styles from './Post.css';
+import styles from '../styles/Post.css';
 
 const PostList = ({ posts }) => (
   <div className={styles.wrapper}>

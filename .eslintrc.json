@@ -4,6 +4,8 @@
   "rules": {
     "react/jsx-one-expression-per-line": "off",
     "react/jsx-filename-extension": "off",
-    "max-len": "warn"
+    "max-len": "warn",
+    "no-underscore-dangle": "off",
+    "no-undef": "off"
   }
 }

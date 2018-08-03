@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import PostList from './components/PostList';
-import fetchPosts from './actions/posts';
-import styles from './components/Post.css';
-import SpinnerStyle from './Spinner.css';
+import styles from './styles/Post.css';
+import SpinnerStyle from './styles/Spinner.css';
+import { FETCH_POSTS } from './actions/types';
 
 class App extends Component {
   componentDidMount() {
@@ -25,6 +25,10 @@ class App extends Component {
 
 const mapStateToProps = state => ({ posts: state.posts, isLoading: state.isLoading });
 
+const mapDispatchToProps = dispatch => ({
+  getPosts: () => dispatch({ type: FETCH_POSTS }),
+});
+
 App.propTypes = {
   posts: PropTypes.arrayOf(
     PropTypes.shape({
@@ -40,5 +44,5 @@ App.propTypes = {
 
 export default connect(
   mapStateToProps,
-  { getPosts: fetchPosts },
+  mapDispatchToProps,
 )(App);

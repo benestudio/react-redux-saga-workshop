@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from './Post.css';
+import styles from '../styles/Post.css';
 
 const Post = ({ post }) => (
   <div className={styles.post}>
