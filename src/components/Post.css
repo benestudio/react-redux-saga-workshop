@@ -1,0 +1,27 @@
+.post {
+  background: lightgray;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.post div {
+  margin: 5px auto;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  margin: auto 50px;
+}
+
+.text {
+  border: 2px solid white;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.title {
+  text-align: center;
+}

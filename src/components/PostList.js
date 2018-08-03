@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Post from './Post';
+import styles from './Post.css';
 
 const PostList = ({ posts }) => (
-  <div>
+  <div className={styles.wrapper}>
     {posts.map(post => (
       <Post key={post.id} post={post} />
     ))}

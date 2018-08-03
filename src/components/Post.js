@@ -1,11 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styles from './Post.css';
 
 const Post = ({ post }) => (
-  <div>
-    <div>{post.id}</div>
-    <div>{post.email}</div>
-    <div>{post.name}</div>
+  <div className={styles.post}>
+    <div className={styles.id}>
+      <b>ID:</b> {post.id}
+    </div>
+    <div>
+      <b>Email:</b> {post.email}
+    </div>
+    <div>
+      <b>Name: </b> {post.name}
+    </div>
+    <section>
+      <b>Text:</b>
+      <div className={styles.text}>{post.text}</div>
+    </section>
   </div>
 );
 

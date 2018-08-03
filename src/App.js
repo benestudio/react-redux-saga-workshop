@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import PostList from './components/PostList';
 import { fetchPosts } from './actions/posts';
+import styles from './components/Post.css';
 
 class App extends Component {
   componentDidMount() {
@@ -14,6 +15,7 @@ class App extends Component {
     const { posts } = this.props;
     return (
       <div>
+        <h1 className={styles.title}>Posts</h1>
         <PostList posts={posts} />
       </div>
     );
