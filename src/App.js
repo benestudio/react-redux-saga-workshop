@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import PostList from './components/PostList';
-import { fetchPosts } from './actions/posts';
+import fetchPosts from './actions/posts';
 import styles from './components/Post.css';
+import SpinnerStyle from './Spinner.css';
 
 class App extends Component {
   componentDidMount() {
@@ -12,17 +13,17 @@ class App extends Component {
   }
 
   render() {
-    const { posts } = this.props;
+    const { posts, isLoading } = this.props;
     return (
       <div>
         <h1 className={styles.title}>Posts</h1>
-        <PostList posts={posts} />
+        {isLoading ? <div className={SpinnerStyle.loader} /> : <PostList posts={posts} />}
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({ posts: state.posts });
+const mapStateToProps = state => ({ posts: state.posts, isLoading: state.isLoading });
 
 App.propTypes = {
   posts: PropTypes.arrayOf(
@@ -34,6 +35,7 @@ App.propTypes = {
     }),
   ).isRequired,
   getPosts: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };
 
 export default connect(
