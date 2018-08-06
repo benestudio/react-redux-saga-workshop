@@ -1,0 +1,12 @@
+.title {
+  text-align: center;
+}
+
+.error {
+  color: white;
+  text-align: center;
+  background: crimson;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: auto 50px;
+}
