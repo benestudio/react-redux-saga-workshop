@@ -1,5 +1,14 @@
-import { put, call, takeEvery } from 'redux-saga/effects';
-import { FETCH_POSTS, POSTS_RECEIVED, POSTS_FAILED } from './actions/types';
+import {
+  put, call, takeEvery, select, takeLatest,
+} from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import {
+  FETCH_POSTS,
+  POSTS_RECEIVED,
+  POSTS_FAILED,
+  FILTER_CHANGED,
+  FILTER_POSTS,
+} from './actions/types';
 import { fetchPostsApi } from './actions';
 
 export function* fetchPostSaga() {
@@ -11,6 +20,16 @@ export function* fetchPostSaga() {
   }
 }
 
-export default function* watchPostSaga() {
+export function* filterPosts({ name }) {
+  yield call(delay, 500);
+
+  const searchName = name.toLowerCase().trim();
+  const posts = yield select(state => state.posts);
+  const filteredPost = posts.filter(post => post.name.toLowerCase().includes(searchName));
+  yield put({ type: FILTER_POSTS, payload: filteredPost });
+}
+
+export default function* rootSaga() {
   yield takeEvery(FETCH_POSTS, fetchPostSaga);
+  yield takeLatest(FILTER_CHANGED, filterPosts);
 }

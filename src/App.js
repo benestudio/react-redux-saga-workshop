@@ -4,15 +4,29 @@ import PropTypes from 'prop-types';
 import PostList from './components/PostList';
 import styles from './styles/App.css';
 import SpinnerStyle from './styles/Spinner.css';
-import { FETCH_POSTS } from './actions/types';
+import { FETCH_POSTS, FILTER_CHANGED } from './actions/types';
 import RefreshButton from './components/RefreshButton';
+import SearchInput from './components/SearchInput';
 
 class App extends Component {
+  state = {
+    name: '',
+  };
+
   componentDidMount() {
     this.refreshPosts();
   }
 
-  onClick = () => this.refreshPosts();
+  onClick = () => {
+    this.refreshPosts();
+    this.setState({ name: '' });
+  };
+
+  onFilterChanged = (e) => {
+    const { filterPosts } = this.props;
+    this.setState({ name: e.target.value });
+    filterPosts(e.target.value);
+  };
 
   refreshPosts() {
     const { getPosts } = this.props;
@@ -20,12 +34,15 @@ class App extends Component {
   }
 
   render() {
-    const { posts, isLoading, error } = this.props;
+    const { filteredPosts, isLoading, error } = this.props;
+    const { name } = this.state;
     return (
       <div>
         <h1 className={styles.title}>Posts</h1>
         <RefreshButton onClick={this.onClick}>Refresh</RefreshButton>
-        {isLoading ? <div className={SpinnerStyle.loader} /> : <PostList posts={posts} />}
+        Filter by name:
+        <SearchInput onChange={this.onFilterChanged} value={name} />
+        {isLoading ? <div className={SpinnerStyle.loader} /> : <PostList posts={filteredPosts} />}
         {error && <div className={styles.error}>Something went wrong!</div>}
       </div>
     );
@@ -33,17 +50,18 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  posts: state.posts,
+  filteredPosts: state.filteredPosts,
   isLoading: state.isLoading,
   error: state.error,
 });
 
 const mapDispatchToProps = dispatch => ({
   getPosts: () => dispatch({ type: FETCH_POSTS }),
+  filterPosts: name => dispatch({ type: FILTER_CHANGED, name }),
 });
 
 App.propTypes = {
-  posts: PropTypes.arrayOf(
+  filteredPosts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
       email: PropTypes.string,
@@ -54,10 +72,11 @@ App.propTypes = {
   getPosts: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   error: PropTypes.shape({}),
+  filterPosts: PropTypes.func.isRequired,
 };
 
 App.defaultProps = {
-  posts: [],
+  filteredPosts: [],
 };
 
 export default connect(
