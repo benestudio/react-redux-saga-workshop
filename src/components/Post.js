@@ -1,11 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from '../styles/Post.css';
+import postPropType from '../utils';
 
-const Post = ({ post }) => (
+const Post = ({ post, deletePost }) => (
   <div className={styles.post}>
-    <div className={styles.id}>
+    <div>
       <b>ID:</b> {post.id}
+      <i
+        className={`fas fa-trash ${styles.delete}`}
+        role="button"
+        tabIndex={0}
+        onClick={() => deletePost(post.id)}
+      />
     </div>
     <div>
       <b>Email:</b> {post.email}
@@ -21,12 +28,8 @@ const Post = ({ post }) => (
 );
 
 Post.propTypes = {
-  post: PropTypes.shape({
-    id: PropTypes.number,
-    email: PropTypes.string,
-    name: PropTypes.string,
-    text: PropTypes.string,
-  }).isRequired,
+  post: postPropType,
+  deletePost: PropTypes.func.isRequired,
 };
 
 export default Post;

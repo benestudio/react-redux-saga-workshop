@@ -1,5 +1,12 @@
 export const FETCH_POSTS = 'FETCH_POSTS';
 export const POSTS_RECEIVED = 'POSTS_RECEIVED';
 export const POSTS_FAILED = 'POSTS_FAILED';
+
 export const FILTER_CHANGED = 'FILTER_CHANGED';
 export const FILTER_POSTS = 'FILTER_POSTS';
+
+export const DELETE_POST = 'DELETE_POST';
+export const POST_DELETED = 'POST_DELETED';
+
+export const UNDO_CANCELLED = 'UNDO_CANCELLED';
+export const UNDO_CONFIRMED = 'UNDO_CONFIRMED';

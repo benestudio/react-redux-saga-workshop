@@ -8,6 +8,9 @@
     "max-len": "warn",
     "no-underscore-dangle": "off",
     "no-undef": "off",
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "no-restricted-globals": "off",
+    "no-alert": "off"
   }
 }

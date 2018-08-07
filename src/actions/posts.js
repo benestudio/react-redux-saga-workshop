@@ -15,3 +15,7 @@ export function fetchPosts() {
 export function fetchPostsApi() {
   return axios.get('http://localhost:3001/posts').then(({ data }) => data);
 }
+
+export function deletePost(id) {
+  return axios.delete(`http://localhost:3001/posts/${id}`);
+}

@@ -8,9 +8,11 @@ import {
   POSTS_FAILED,
   FILTER_CHANGED,
   FILTER_POSTS,
+  DELETE_POST,
+  POST_DELETED,
 } from './actions/types';
 import { getPosts } from './reducers';
-import { fetchPostsApi } from './actions';
+import { fetchPostsApi, deletePost } from './actions';
 
 export function* fetchPostSaga() {
   try {
@@ -30,7 +32,18 @@ export function* filterPosts({ name }) {
   yield put({ type: FILTER_POSTS, payload: filteredPost });
 }
 
+export function* removePost({ id }) {
+  yield call(deletePost, id);
+
+  const posts = yield select(getPosts);
+  const remainingPosts = posts.filter(post => post.id !== id);
+  const removedPost = posts.find(post => post.id === id);
+
+  yield put({ type: POST_DELETED, payload: remainingPosts, removedPost });
+}
+
 export default function* rootSaga() {
   yield takeEvery(FETCH_POSTS, fetchPostSaga);
   yield takeLatest(FILTER_CHANGED, filterPosts);
+  yield takeEvery(DELETE_POST, removePost);
 }
