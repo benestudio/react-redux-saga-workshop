@@ -9,6 +9,7 @@ import {
   FILTER_CHANGED,
   FILTER_POSTS,
 } from './actions/types';
+import { getPosts } from './reducers';
 import { fetchPostsApi } from './actions';
 
 export function* fetchPostSaga() {
@@ -24,7 +25,7 @@ export function* filterPosts({ name }) {
   yield call(delay, 500);
 
   const searchName = name.toLowerCase().trim();
-  const posts = yield select(state => state.posts);
+  const posts = yield select(getPosts);
   const filteredPost = posts.filter(post => post.name.toLowerCase().includes(searchName));
   yield put({ type: FILTER_POSTS, payload: filteredPost });
 }

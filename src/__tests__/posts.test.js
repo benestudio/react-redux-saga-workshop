@@ -1,10 +1,12 @@
-import { call, put } from 'redux-saga/effects';
-import { fetchPostSaga } from '../sagas';
+import { call, put, select } from 'redux-saga/effects';
+import { cloneableGenerator } from 'redux-saga/utils';
+import { delay } from 'redux-saga';
+import { fetchPostSaga, filterPosts } from '../sagas';
 import { fetchPostsApi } from '../actions';
-import { POSTS_RECEIVED, POSTS_FAILED } from '../actions/types';
-import { cloneableGenerator } from '../../node_modules/redux-saga/utils';
+import { POSTS_RECEIVED, POSTS_FAILED, FILTER_POSTS } from '../actions/types';
+import { getPosts } from '../reducers';
 
-export default describe('posts', () => {
+describe('posts', () => {
   const generator = cloneableGenerator(fetchPostSaga)();
 
   test('fetching posts successfully', () => {
@@ -22,6 +24,24 @@ export default describe('posts', () => {
 
     expect(clone.next().value).toEqual(call(fetchPostsApi));
     expect(clone.throw(error).value).toEqual(put({ type: POSTS_FAILED, error }));
+    expect(clone.next().done).toBe(true);
+  });
+});
+
+describe('search by name', () => {
+  const searchParam = { name: 'Bob' };
+  const generator = cloneableGenerator(filterPosts)(searchParam);
+
+  const usersMock = [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Cindy' }];
+
+  test('successful search', () => {
+    const clone = generator.clone();
+
+    expect(clone.next().value).toEqual(call(delay, 500));
+    expect(clone.next().value).toEqual(select(getPosts));
+    expect(clone.next(usersMock).value).toEqual(
+      put({ type: FILTER_POSTS, payload: [searchParam] }),
+    );
     expect(clone.next().done).toBe(true);
   });
 });

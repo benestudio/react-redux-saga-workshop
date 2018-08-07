@@ -8,6 +8,8 @@ const initialState = {
   isLoading: false,
 };
 
+export const getPosts = state => state.posts;
+
 export default function (state = initialState, action) {
   switch (action.type) {
     case FETCH_POSTS:
