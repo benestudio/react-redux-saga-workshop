@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from '../styles/Post.css';
 import postPropType from '../utils';
+import StyledPost from './StyledPost';
 
-const Post = ({ post, deletePost }) => (
-  <div className={styles.post}>
+const Post = ({ post, deletePost, removed }) => (
+  <StyledPost removed={removed}>
     <div>
       <b>ID:</b> {post.id}
       <i
@@ -24,12 +25,13 @@ const Post = ({ post, deletePost }) => (
       <b>Text:</b>
       <div className={styles.text}>{post.text}</div>
     </section>
-  </div>
+  </StyledPost>
 );
 
 Post.propTypes = {
   post: postPropType,
   deletePost: PropTypes.func.isRequired,
+  removed: PropTypes.bool,
 };
 
 export default Post;

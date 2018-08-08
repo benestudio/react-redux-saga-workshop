@@ -1,5 +1,5 @@
 import {
-  put, call, takeEvery, select, takeLatest,
+  put, call, takeEvery, select, takeLatest, race, take,
 } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import {
@@ -8,8 +8,11 @@ import {
   POSTS_FAILED,
   FILTER_CHANGED,
   FILTER_POSTS,
-  DELETE_POST,
-  POST_DELETED,
+  DELETE_POST_REQUEST,
+  DELETE_POST_SUCCESS,
+  DELETE_POST_CANCELLED,
+  DELETE_POST_ERROR,
+  DELETE_POST_CONFIRMED,
 } from './actions/types';
 import { getPosts } from './reducers';
 import { fetchPostsApi, deletePost } from './actions';
@@ -32,18 +35,30 @@ export function* filterPosts({ name }) {
   yield put({ type: FILTER_POSTS, payload: filteredPost });
 }
 
+export function* performDelete(id) {
+  try {
+    yield race({
+      wait: call(delay, 5000),
+      instantDelete: take(DELETE_POST_CONFIRMED),
+    });
+
+    yield call(deletePost, id);
+
+    yield put({ type: DELETE_POST_SUCCESS, id });
+  } catch (error) {
+    yield put({ type: DELETE_POST_ERROR });
+  }
+}
+
 export function* removePost({ id }) {
-  yield call(deletePost, id);
-
-  const posts = yield select(getPosts);
-  const remainingPosts = posts.filter(post => post.id !== id);
-  const removedPost = posts.find(post => post.id === id);
-
-  yield put({ type: POST_DELETED, payload: remainingPosts, removedPost });
+  yield race({
+    response: call(performDelete, id),
+    cancelDeleting: take([DELETE_POST_CANCELLED, DELETE_POST_ERROR]),
+  });
 }
 
 export default function* rootSaga() {
   yield takeEvery(FETCH_POSTS, fetchPostSaga);
   yield takeLatest(FILTER_CHANGED, filterPosts);
-  yield takeEvery(DELETE_POST, removePost);
+  yield takeLatest(DELETE_POST_REQUEST, removePost);
 }

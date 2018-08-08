@@ -7,9 +7,9 @@ import SpinnerStyle from './styles/Spinner.css';
 import {
   FETCH_POSTS,
   FILTER_CHANGED,
-  DELETE_POST,
-  UNDO_CONFIRMED,
-  UNDO_CANCELLED,
+  DELETE_POST_REQUEST,
+  DELETE_POST_CANCELLED,
+  DELETE_POST_CONFIRMED,
 } from './actions/types';
 import RefreshButton from './components/RefreshButton';
 import SearchInput from './components/SearchInput';
@@ -36,16 +36,16 @@ class App extends Component {
     filterPosts(e.target.value);
   };
 
-  deletePost = (id) => {
-    const { removePost } = this.props;
+  onDeleteClick = (id) => {
+    const { tryDeletePost } = this.props;
     if (confirm(`Delete post with ID: ${id}`)) {
-      removePost(id);
+      tryDeletePost(id);
     }
   };
 
-  undo = () => {
-    const { undo } = this.props;
-    undo();
+  delete = () => {
+    const { deleteConfirmed } = this.props;
+    deleteConfirmed();
   };
 
   cancel = () => {
@@ -70,12 +70,16 @@ class App extends Component {
         Filter by name:
         <SearchInput onChange={this.onFilterChanged} value={name} />
         {removedPost && (
-          <RemovedPostWarning post={removedPost} undo={this.undo} cancel={this.cancel} />
+          <RemovedPostWarning post={removedPost} remove={this.delete} cancel={this.cancel} />
         )}
         {isLoading ? (
           <div className={SpinnerStyle.loader} />
         ) : (
-          <PostList posts={filteredPosts} deletePost={this.deletePost} />
+          <PostList
+            removedPost={removedPost}
+            posts={filteredPosts}
+            deletePost={this.onDeleteClick}
+          />
         )}
         {error && <div className={styles.error}>Something went wrong!</div>}
       </div>
@@ -93,9 +97,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getPosts: () => dispatch({ type: FETCH_POSTS }),
   filterPosts: name => dispatch({ type: FILTER_CHANGED, name }),
-  removePost: id => dispatch({ type: DELETE_POST, id }),
-  undo: () => dispatch({ type: UNDO_CONFIRMED }),
-  cancel: () => dispatch({ type: UNDO_CANCELLED }),
+  tryDeletePost: id => dispatch({ type: DELETE_POST_REQUEST, id }),
+  cancel: () => dispatch({ type: DELETE_POST_CANCELLED }),
+  deleteConfirmed: () => dispatch({ type: DELETE_POST_CONFIRMED }),
 });
 
 App.propTypes = {
@@ -104,9 +108,9 @@ App.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   error: PropTypes.shape({}),
   filterPosts: PropTypes.func.isRequired,
-  removePost: PropTypes.func.isRequired,
+  tryDeletePost: PropTypes.func.isRequired,
   removedPost: postPropType,
-  undo: PropTypes.func.isRequired,
+  deleteConfirmed: PropTypes.func.isRequired,
   cancel: PropTypes.func.isRequired,
 };
 

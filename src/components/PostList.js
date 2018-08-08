@@ -4,10 +4,15 @@ import Post from './Post';
 import styles from '../styles/Post.css';
 import postPropType from '../utils';
 
-const PostList = ({ posts, deletePost }) => (
+const PostList = ({ posts, deletePost, removedPost }) => (
   <div className={styles.wrapper}>
     {posts.map(post => (
-      <Post key={post.id} post={post} deletePost={deletePost} />
+      <Post
+        removed={removedPost && post.id === removedPost.id}
+        key={post.id}
+        post={post}
+        deletePost={deletePost}
+      />
     ))}
   </div>
 );
@@ -15,6 +20,7 @@ const PostList = ({ posts, deletePost }) => (
 PostList.propTypes = {
   posts: PropTypes.arrayOf(postPropType).isRequired,
   deletePost: PropTypes.func.isRequired,
+  removedPost: postPropType,
 };
 
 export default PostList;

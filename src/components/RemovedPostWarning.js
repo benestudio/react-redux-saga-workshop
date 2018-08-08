@@ -10,7 +10,7 @@ const Button = styled.button`
   border-radius: 5px;
   border: 0;
   background: #ffc773;
-
+  cursor: pointer;
   ${({ cancel }) => cancel
     && css`
       background: #ffe3b9;
@@ -18,11 +18,11 @@ const Button = styled.button`
 `;
 
 const RemovedPostWarning = ({
-  post, className, undo, cancel,
+  post, className, remove, cancel,
 }) => (
   <div className={className}>
-    Post by <b>{post.name}</b> is deleted. Undo changes?
-    <Button onClick={undo}>Undo</Button>
+    Post by <b>{post.name}</b> is about to be deleted. Are you sure?
+    <Button onClick={remove}>Delete</Button>
     <Button onClick={cancel} cancel>
       Cancel
     </Button>
@@ -32,7 +32,7 @@ const RemovedPostWarning = ({
 RemovedPostWarning.propTypes = {
   post: postPropType,
   className: PropTypes.string.isRequired,
-  undo: PropTypes.func.isRequired,
+  remove: PropTypes.func.isRequired,
   cancel: PropTypes.func.isRequired,
 };
 

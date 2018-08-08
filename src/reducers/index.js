@@ -3,8 +3,10 @@ import {
   POSTS_RECEIVED,
   POSTS_FAILED,
   FILTER_POSTS,
-  POST_DELETED,
-  UNDO_CANCELLED,
+  DELETE_POST_SUCCESS,
+  DELETE_POST_CANCELLED,
+  DELETE_POST_REQUEST,
+  DELETE_POST_ERROR,
 } from '../actions/types';
 
 const initialState = {
@@ -32,14 +34,17 @@ export default function (state = initialState, action) {
       return { ...state, isLoading: false, error: action.error };
     case FILTER_POSTS:
       return { ...state, filteredPosts: action.payload };
-    case POST_DELETED:
+    case DELETE_POST_REQUEST:
+      return { ...state, removedPost: state.posts.find(p => p.id === action.id) };
+    case DELETE_POST_SUCCESS:
       return {
         ...state,
-        posts: action.payload,
-        filteredPosts: action.payload,
-        removedPost: action.removedPost,
+        posts: state.posts.filter(p => p.id !== action.id),
+        filteredPosts: state.posts.filter(p => p.id !== action.id),
+        removedPost: null,
       };
-    case UNDO_CANCELLED:
+    case DELETE_POST_ERROR:
+    case DELETE_POST_CANCELLED:
       return { ...state, removedPost: null };
     default:
       return { ...state };
