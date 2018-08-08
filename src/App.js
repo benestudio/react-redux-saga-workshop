@@ -46,6 +46,7 @@ class App extends Component {
   delete = () => {
     const { deleteConfirmed } = this.props;
     deleteConfirmed();
+    this.setState({ name: '' });
   };
 
   cancel = () => {

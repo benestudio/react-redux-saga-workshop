@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import postPropType from '../utils';
 
 const Button = styled.button`
@@ -18,7 +19,7 @@ const Button = styled.button`
 `;
 
 const RemovedPostWarning = ({
-  post, className, remove, cancel,
+  post, className, remove, cancel, remainingSeconds,
 }) => (
   <div className={className}>
     Post by <b>{post.name}</b> is about to be deleted. Are you sure?
@@ -26,6 +27,7 @@ const RemovedPostWarning = ({
     <Button onClick={cancel} cancel>
       Cancel
     </Button>
+    <span> {remainingSeconds}</span>
   </div>
 );
 
@@ -34,9 +36,10 @@ RemovedPostWarning.propTypes = {
   className: PropTypes.string.isRequired,
   remove: PropTypes.func.isRequired,
   cancel: PropTypes.func.isRequired,
+  remainingSeconds: PropTypes.number,
 };
 
-export default styled(RemovedPostWarning)`
+const StyledWarning = styled(RemovedPostWarning)`
   background: #ff9800;
   color: white;
   padding: 10px;
@@ -44,3 +47,10 @@ export default styled(RemovedPostWarning)`
   margin: 5px 50px 10px;
   border-radius: 5px;
 `;
+
+const mapStateToProps = ({ remainingSeconds }) => ({ remainingSeconds });
+
+export default connect(
+  mapStateToProps,
+  null,
+)(StyledWarning);

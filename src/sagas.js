@@ -1,7 +1,7 @@
 import {
   put, call, takeEvery, select, takeLatest, race, take,
 } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { delay, eventChannel, END } from 'redux-saga';
 import {
   FETCH_POSTS,
   POSTS_RECEIVED,
@@ -13,9 +13,28 @@ import {
   DELETE_POST_CANCELLED,
   DELETE_POST_ERROR,
   DELETE_POST_CONFIRMED,
+  COUNTDOWN_SECONDS,
 } from './actions/types';
 import { getPosts } from './reducers';
 import { fetchPostsApi, deletePost } from './actions';
+import { CANCEL_TIME } from './utils';
+
+const countdown = seconds => eventChannel((emitter) => {
+  let secs = seconds;
+  const iv = setInterval(() => {
+    secs -= 1;
+    if (secs > 0) {
+      emitter(secs);
+    } else {
+      // this causes the channel to close
+      emitter(END);
+    }
+  }, 1000);
+    // The subscriber must return an unsubscribe function
+  return () => {
+    clearInterval(iv);
+  };
+});
 
 export function* fetchPostSaga() {
   try {
@@ -35,10 +54,22 @@ export function* filterPosts({ name }) {
   yield put({ type: FILTER_POSTS, payload: filteredPost });
 }
 
+function* countdownSaga() {
+  const chan = yield call(countdown, CANCEL_TIME);
+  try {
+    while (true) {
+      const remainingSeconds = yield take(chan);
+      yield put({ type: COUNTDOWN_SECONDS, remainingSeconds });
+    }
+  } finally {
+    chan.close();
+  }
+}
+
 export function* performDelete(id) {
   try {
     yield race({
-      wait: call(delay, 5000),
+      wait: call(countdownSaga),
       instantDelete: take(DELETE_POST_CONFIRMED),
     });
 

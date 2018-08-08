@@ -7,13 +7,16 @@ import {
   DELETE_POST_CANCELLED,
   DELETE_POST_REQUEST,
   DELETE_POST_ERROR,
+  COUNTDOWN_SECONDS,
 } from '../actions/types';
+import { CANCEL_TIME } from '../utils';
 
 const initialState = {
   posts: [],
   filteredPosts: [],
   isLoading: false,
   removedPost: null,
+  remainingSeconds: CANCEL_TIME,
 };
 
 export const getPosts = state => state.posts;
@@ -42,10 +45,13 @@ export default function (state = initialState, action) {
         posts: state.posts.filter(p => p.id !== action.id),
         filteredPosts: state.posts.filter(p => p.id !== action.id),
         removedPost: null,
+        remainingSeconds: CANCEL_TIME,
       };
     case DELETE_POST_ERROR:
     case DELETE_POST_CANCELLED:
-      return { ...state, removedPost: null };
+      return { ...state, removedPost: null, remainingSeconds: CANCEL_TIME };
+    case COUNTDOWN_SECONDS:
+      return { ...state, remainingSeconds: action.remainingSeconds };
     default:
       return { ...state };
   }
