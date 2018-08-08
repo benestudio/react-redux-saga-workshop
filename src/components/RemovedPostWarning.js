@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import postPropType from '../utils';
+import TimeSpinner from './TimeSpinner';
 
 const Button = styled.button`
   font-size: 0.8rem;
@@ -27,7 +28,7 @@ const RemovedPostWarning = ({
     <Button onClick={cancel} cancel>
       Cancel
     </Button>
-    <span> {remainingSeconds}</span>
+    <TimeSpinner remainingSeconds={remainingSeconds} />
   </div>
 );
 

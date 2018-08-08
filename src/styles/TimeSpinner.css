@@ -1,0 +1,14 @@
+.countdown {
+  position: relative;
+  margin: auto;
+  margin-left: 20px;
+  height: 40px;
+  width: 40px;
+  text-align: center;
+}
+
+.countdownNumber {
+  color: white;
+  display: inline-block;
+  line-height: 40px;
+}
