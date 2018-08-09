@@ -4,18 +4,18 @@ import {
 import { cloneableGenerator } from 'redux-saga/utils';
 import { delay } from 'redux-saga';
 import {
-  fetchPostSaga, filterPosts, performDelete, countdownSaga,
+  fetchPostSaga, filterPostsSaga, performDelete, countdownSaga,
 } from '../sagas';
 import { fetchPostsApi, deletePost } from '../actions';
-import {
-  POSTS_RECEIVED,
-  POSTS_FAILED,
-  FILTER_POSTS,
-  DELETE_POST_CONFIRMED,
-  DELETE_POST_SUCCESS,
-  DELETE_POST_ERROR,
-} from '../actions/types';
+import { DELETE_POST_CONFIRMED } from '../actions/types';
 import { getPosts } from '../reducers';
+import {
+  postsReceived,
+  postsFailed,
+  filterPosts,
+  deletePostSuccess,
+  deletePostError,
+} from '../actions/actionCreators';
 
 describe('fetching posts', () => {
   const generator = cloneableGenerator(fetchPostSaga)();
@@ -25,7 +25,7 @@ describe('fetching posts', () => {
     const posts = {};
 
     expect(clone.next().value).toEqual(call(fetchPostsApi));
-    expect(clone.next(posts).value).toEqual(put({ type: POSTS_RECEIVED, payload: posts }));
+    expect(clone.next(posts).value).toEqual(put(postsReceived(posts)));
     expect(clone.next().done).toBe(true);
   });
 
@@ -34,14 +34,14 @@ describe('fetching posts', () => {
     const error = {};
 
     expect(clone.next().value).toEqual(call(fetchPostsApi));
-    expect(clone.throw(error).value).toEqual(put({ type: POSTS_FAILED, error }));
+    expect(clone.throw(error).value).toEqual(put(postsFailed(error)));
     expect(clone.next().done).toBe(true);
   });
 });
 
 describe('search by name', () => {
   const searchParam = { name: 'Bob' };
-  const generator = cloneableGenerator(filterPosts)(searchParam);
+  const generator = cloneableGenerator(filterPostsSaga)(searchParam);
 
   const usersMock = [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Cindy' }];
 
@@ -50,9 +50,7 @@ describe('search by name', () => {
 
     expect(clone.next().value).toEqual(call(delay, 500));
     expect(clone.next().value).toEqual(select(getPosts));
-    expect(clone.next(usersMock).value).toEqual(
-      put({ type: FILTER_POSTS, payload: [searchParam] }),
-    );
+    expect(clone.next(usersMock).value).toEqual(put(filterPosts([searchParam])));
     expect(clone.next().done).toBe(true);
   });
 });
@@ -75,9 +73,7 @@ describe('delete post', () => {
 
     expect(clone.next().value).toEqual(call(deletePost, deletedPostID));
     expect(clone.next().value).toEqual(select(getPosts));
-    expect(clone.next(mockPosts).value).toEqual(
-      put({ type: DELETE_POST_SUCCESS, remainingPosts: mockPostsWithoutDeleted }),
-    );
+    expect(clone.next(mockPosts).value).toEqual(put(deletePostSuccess(mockPostsWithoutDeleted)));
 
     expect(clone.next().done).toBe(true);
   });
@@ -93,7 +89,7 @@ describe('delete post', () => {
       }),
     );
 
-    expect(clone.throw(error).value).toEqual(put({ type: DELETE_POST_ERROR }));
+    expect(clone.throw(error).value).toEqual(put(deletePostError()));
     expect(clone.next().done).toBe(true);
   });
 });

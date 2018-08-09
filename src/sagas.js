@@ -4,20 +4,23 @@ import {
 import { delay, eventChannel, END } from 'redux-saga';
 import {
   FETCH_POSTS,
-  POSTS_RECEIVED,
-  POSTS_FAILED,
   FILTER_CHANGED,
-  FILTER_POSTS,
   DELETE_POST_REQUEST,
-  DELETE_POST_SUCCESS,
   DELETE_POST_CANCELLED,
   DELETE_POST_ERROR,
   DELETE_POST_CONFIRMED,
-  COUNTDOWN_SECONDS,
 } from './actions/types';
 import { getPosts } from './reducers';
 import { fetchPostsApi, deletePost } from './actions';
 import { CANCEL_TIME } from './utils';
+import {
+  postsReceived,
+  postsFailed,
+  filterPosts,
+  countdownSeconds,
+  deletePostSuccess,
+  deletePostError,
+} from './actions/actionCreators';
 
 const countdown = seconds => eventChannel((emitter) => {
   let secs = seconds;
@@ -39,19 +42,19 @@ const countdown = seconds => eventChannel((emitter) => {
 export function* fetchPostSaga() {
   try {
     const posts = yield call(fetchPostsApi);
-    yield put({ type: POSTS_RECEIVED, payload: posts });
+    yield put(postsReceived(posts));
   } catch (error) {
-    yield put({ type: POSTS_FAILED, error });
+    yield put(postsFailed(error));
   }
 }
 
-export function* filterPosts({ name }) {
+export function* filterPostsSaga({ name }) {
   yield call(delay, 500);
 
   const searchName = name.toLowerCase().trim();
   const posts = yield select(getPosts);
   const filteredPost = posts.filter(post => post.name.toLowerCase().includes(searchName));
-  yield put({ type: FILTER_POSTS, payload: filteredPost });
+  yield put(filterPosts(filteredPost));
 }
 
 export function* countdownSaga() {
@@ -59,7 +62,7 @@ export function* countdownSaga() {
   try {
     while (true) {
       const remainingSeconds = yield take(chan);
-      yield put({ type: COUNTDOWN_SECONDS, remainingSeconds });
+      yield put(countdownSeconds(remainingSeconds));
     }
   } finally {
     chan.close();
@@ -78,9 +81,9 @@ export function* performDelete(id) {
     const posts = yield select(getPosts);
     const remainingPosts = posts.filter(post => post.id !== id);
 
-    yield put({ type: DELETE_POST_SUCCESS, remainingPosts });
+    yield put(deletePostSuccess(remainingPosts));
   } catch (error) {
-    yield put({ type: DELETE_POST_ERROR });
+    yield put(deletePostError(error));
   }
 }
 
@@ -93,6 +96,6 @@ export function* removePost({ id }) {
 
 export default function* rootSaga() {
   yield takeEvery(FETCH_POSTS, fetchPostSaga);
-  yield takeLatest(FILTER_CHANGED, filterPosts);
+  yield takeLatest(FILTER_CHANGED, filterPostsSaga);
   yield takeLatest(DELETE_POST_REQUEST, removePost);
 }

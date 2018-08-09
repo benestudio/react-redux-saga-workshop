@@ -4,17 +4,17 @@ import PropTypes from 'prop-types';
 import PostList from './components/PostList';
 import styles from './styles/App.css';
 import SpinnerStyle from './styles/Spinner.css';
-import {
-  FETCH_POSTS,
-  FILTER_CHANGED,
-  DELETE_POST_REQUEST,
-  DELETE_POST_CANCELLED,
-  DELETE_POST_CONFIRMED,
-} from './actions/types';
 import RefreshButton from './components/RefreshButton';
 import SearchInput from './components/SearchInput';
 import postPropType from './utils';
 import RemovedPostWarning from './components/RemovedPostWarning';
+import {
+  fetchPosts,
+  filterChanged,
+  deletePostRequest,
+  deletePostCancelled,
+  deletePostConfirmed,
+} from './actions/actionCreators';
 
 class App extends Component {
   state = {
@@ -95,13 +95,13 @@ const mapStateToProps = state => ({
   removedPost: state.removedPost,
 });
 
-const mapDispatchToProps = dispatch => ({
-  getPosts: () => dispatch({ type: FETCH_POSTS }),
-  filterPosts: name => dispatch({ type: FILTER_CHANGED, name }),
-  tryDeletePost: id => dispatch({ type: DELETE_POST_REQUEST, id }),
-  cancel: () => dispatch({ type: DELETE_POST_CANCELLED }),
-  deleteConfirmed: () => dispatch({ type: DELETE_POST_CONFIRMED }),
-});
+const mapDispatchToProps = {
+  getPosts: fetchPosts,
+  filterPosts: filterChanged,
+  tryDeletePost: deletePostRequest,
+  cancel: deletePostCancelled,
+  deleteConfirmed: deletePostConfirmed,
+};
 
 App.propTypes = {
   filteredPosts: PropTypes.arrayOf(postPropType),
