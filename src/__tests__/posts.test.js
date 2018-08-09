@@ -1,12 +1,23 @@
-import { call, put, select } from 'redux-saga/effects';
+import {
+  call, put, select, race, take,
+} from 'redux-saga/effects';
 import { cloneableGenerator } from 'redux-saga/utils';
 import { delay } from 'redux-saga';
-import { fetchPostSaga, filterPosts } from '../sagas';
-import { fetchPostsApi } from '../actions';
-import { POSTS_RECEIVED, POSTS_FAILED, FILTER_POSTS } from '../actions/types';
+import {
+  fetchPostSaga, filterPosts, performDelete, countdownSaga,
+} from '../sagas';
+import { fetchPostsApi, deletePost } from '../actions';
+import {
+  POSTS_RECEIVED,
+  POSTS_FAILED,
+  FILTER_POSTS,
+  DELETE_POST_CONFIRMED,
+  DELETE_POST_SUCCESS,
+  DELETE_POST_ERROR,
+} from '../actions/types';
 import { getPosts } from '../reducers';
 
-describe('posts', () => {
+describe('fetching posts', () => {
   const generator = cloneableGenerator(fetchPostSaga)();
 
   test('fetching posts successfully', () => {
@@ -42,6 +53,47 @@ describe('search by name', () => {
     expect(clone.next(usersMock).value).toEqual(
       put({ type: FILTER_POSTS, payload: [searchParam] }),
     );
+    expect(clone.next().done).toBe(true);
+  });
+});
+
+describe('delete post', () => {
+  const deletedPostID = 2;
+  const generator = cloneableGenerator(performDelete)(deletedPostID);
+
+  test('succesful delete', () => {
+    const clone = generator.clone();
+    const mockPosts = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }];
+    const mockPostsWithoutDeleted = [{ id: 1, name: 'Alice' }];
+
+    expect(clone.next().value).toEqual(
+      race({
+        wait: call(countdownSaga),
+        instantDelete: take(DELETE_POST_CONFIRMED),
+      }),
+    );
+
+    expect(clone.next().value).toEqual(call(deletePost, deletedPostID));
+    expect(clone.next().value).toEqual(select(getPosts));
+    expect(clone.next(mockPosts).value).toEqual(
+      put({ type: DELETE_POST_SUCCESS, remainingPosts: mockPostsWithoutDeleted }),
+    );
+
+    expect(clone.next().done).toBe(true);
+  });
+
+  test('error delete', () => {
+    const clone = generator.clone();
+    const error = {};
+
+    expect(clone.next().value).toEqual(
+      race({
+        wait: call(countdownSaga),
+        instantDelete: take(DELETE_POST_CONFIRMED),
+      }),
+    );
+
+    expect(clone.throw(error).value).toEqual(put({ type: DELETE_POST_ERROR }));
     expect(clone.next().done).toBe(true);
   });
 });

@@ -54,7 +54,7 @@ export function* filterPosts({ name }) {
   yield put({ type: FILTER_POSTS, payload: filteredPost });
 }
 
-function* countdownSaga() {
+export function* countdownSaga() {
   const chan = yield call(countdown, CANCEL_TIME);
   try {
     while (true) {
@@ -75,7 +75,10 @@ export function* performDelete(id) {
 
     yield call(deletePost, id);
 
-    yield put({ type: DELETE_POST_SUCCESS, id });
+    const posts = yield select(getPosts);
+    const remainingPosts = posts.filter(post => post.id !== id);
+
+    yield put({ type: DELETE_POST_SUCCESS, remainingPosts });
   } catch (error) {
     yield put({ type: DELETE_POST_ERROR });
   }

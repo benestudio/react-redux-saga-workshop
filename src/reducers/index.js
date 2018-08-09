@@ -42,8 +42,8 @@ export default function (state = initialState, action) {
     case DELETE_POST_SUCCESS:
       return {
         ...state,
-        posts: state.posts.filter(p => p.id !== action.id),
-        filteredPosts: state.posts.filter(p => p.id !== action.id),
+        posts: action.remainingPosts,
+        filteredPosts: action.remainingPosts,
         removedPost: null,
         remainingSeconds: CANCEL_TIME,
       };
