@@ -20,12 +20,12 @@ const Button = styled.button`
 `;
 
 const RemovedPostWarning = ({
-  post, className, remove, cancel, remainingSeconds,
+  post, className, confirmDelete, cancelDelete, remainingSeconds,
 }) => (
   <div className={className}>
     Post by <b>{post.name}</b> is about to be deleted. Are you sure?
-    <Button onClick={remove}>Delete</Button>
-    <Button onClick={cancel} cancel>
+    <Button onClick={confirmDelete}>Delete</Button>
+    <Button onClick={cancelDelete} cancel>
       Cancel
     </Button>
     <TimeSpinner remainingSeconds={remainingSeconds} />
@@ -35,8 +35,8 @@ const RemovedPostWarning = ({
 RemovedPostWarning.propTypes = {
   post: postPropType,
   className: PropTypes.string.isRequired,
-  remove: PropTypes.func.isRequired,
-  cancel: PropTypes.func.isRequired,
+  confirmDelete: PropTypes.func.isRequired,
+  cancelDelete: PropTypes.func.isRequired,
   remainingSeconds: PropTypes.number,
 };
 

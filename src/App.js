@@ -25,7 +25,7 @@ class App extends Component {
     this.refreshPosts();
   }
 
-  onClick = () => {
+  onRefreshClick = () => {
     this.refreshPosts();
     this.setState({ name: '' });
   };
@@ -43,13 +43,13 @@ class App extends Component {
     }
   };
 
-  delete = () => {
+  confirmDelete = () => {
     const { deleteConfirmed } = this.props;
     deleteConfirmed();
     this.setState({ name: '' });
   };
 
-  cancel = () => {
+  cancelDelete = () => {
     const { cancel } = this.props;
     cancel();
   };
@@ -67,11 +67,15 @@ class App extends Component {
     return (
       <div>
         <h1 className={styles.title}>Posts</h1>
-        <RefreshButton onClick={this.onClick}>Refresh</RefreshButton>
+        <RefreshButton onClick={this.onRefreshClick}>Refresh</RefreshButton>
         Filter by name:
         <SearchInput onChange={this.onFilterChanged} value={name} />
         {removedPost && (
-          <RemovedPostWarning post={removedPost} remove={this.delete} cancel={this.cancel} />
+          <RemovedPostWarning
+            post={removedPost}
+            confirmDelete={this.confirmDelete}
+            cancelDelete={this.cancelDelete}
+          />
         )}
         {isLoading ? (
           <div className={SpinnerStyle.loader} />

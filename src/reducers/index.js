@@ -1,7 +1,7 @@
 import {
-  FETCH_POSTS,
-  POSTS_RECEIVED,
-  POSTS_FAILED,
+  FETCH_POSTS_REQUEST,
+  FETCH_POSTS_SUCCESS,
+  FETCH_POSTS_ERROR,
   FILTER_POSTS,
   DELETE_POST_SUCCESS,
   DELETE_POST_CANCELLED,
@@ -23,9 +23,9 @@ export const getPosts = state => state.posts;
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case FETCH_POSTS:
+    case FETCH_POSTS_REQUEST:
       return { ...state, isLoading: true, error: null };
-    case POSTS_RECEIVED:
+    case FETCH_POSTS_SUCCESS:
       return {
         ...state,
         posts: action.payload,
@@ -33,7 +33,7 @@ export default function (state = initialState, action) {
         isLoading: false,
         error: null,
       };
-    case POSTS_FAILED:
+    case FETCH_POSTS_ERROR:
       return { ...state, isLoading: false, error: action.error };
     case FILTER_POSTS:
       return { ...state, filteredPosts: action.payload };

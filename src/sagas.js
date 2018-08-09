@@ -3,7 +3,7 @@ import {
 } from 'redux-saga/effects';
 import { delay, eventChannel, END } from 'redux-saga';
 import {
-  FETCH_POSTS,
+  FETCH_POSTS_REQUEST,
   FILTER_CHANGED,
   DELETE_POST_REQUEST,
   DELETE_POST_CANCELLED,
@@ -29,11 +29,9 @@ const countdown = seconds => eventChannel((emitter) => {
     if (secs > 0) {
       emitter(secs);
     } else {
-      // this causes the channel to close
       emitter(END);
     }
   }, 1000);
-    // The subscriber must return an unsubscribe function
   return () => {
     clearInterval(iv);
   };
@@ -95,7 +93,7 @@ export function* removePost({ id }) {
 }
 
 export default function* rootSaga() {
-  yield takeEvery(FETCH_POSTS, fetchPostSaga);
+  yield takeEvery(FETCH_POSTS_REQUEST, fetchPostSaga);
   yield takeLatest(FILTER_CHANGED, filterPostsSaga);
   yield takeLatest(DELETE_POST_REQUEST, removePost);
 }

@@ -1,20 +1,20 @@
 import {
-  POSTS_RECEIVED,
-  POSTS_FAILED,
+  FETCH_POSTS_SUCCESS,
+  FETCH_POSTS_ERROR,
   FILTER_POSTS,
   DELETE_POST_SUCCESS,
   COUNTDOWN_SECONDS,
   DELETE_POST_ERROR,
-  FETCH_POSTS,
+  FETCH_POSTS_REQUEST,
   FILTER_CHANGED,
   DELETE_POST_REQUEST,
   DELETE_POST_CANCELLED,
   DELETE_POST_CONFIRMED,
 } from './types';
 
-export const postsReceived = posts => ({ type: POSTS_RECEIVED, payload: posts });
+export const postsReceived = posts => ({ type: FETCH_POSTS_SUCCESS, payload: posts });
 
-export const postsFailed = error => ({ type: POSTS_FAILED, error });
+export const postsFailed = error => ({ type: FETCH_POSTS_ERROR, error });
 
 export const filterPosts = filteredPosts => ({ type: FILTER_POSTS, payload: filteredPosts });
 
@@ -32,4 +32,4 @@ export const deletePostCancelled = () => ({ type: DELETE_POST_CANCELLED });
 
 export const deletePostConfirmed = () => ({ type: DELETE_POST_CONFIRMED });
 
-export const fetchPosts = () => ({ type: FETCH_POSTS });
+export const fetchPosts = () => ({ type: FETCH_POSTS_REQUEST });
