@@ -9,12 +9,13 @@ import SearchInput from './components/SearchInput';
 import postPropType from './utils';
 import RemovedPostWarning from './components/RemovedPostWarning';
 import {
-  fetchPosts,
+  // fetchPosts,
   filterChanged,
   deletePostRequest,
   deletePostCancelled,
   deletePostConfirmed,
 } from './actions/actionCreators';
+import { fetchPosts } from './actions';
 
 class App extends Component {
   state = {
